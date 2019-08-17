@@ -23,7 +23,6 @@ npm install redux-in-worker
 store.worker.js:
 ```javascript
 import { createStore } from 'redux';
-
 import { exposeStore } from 'redux-in-worker';
 
 const initialState = { count: 0 };
@@ -45,10 +44,9 @@ exposeStore(store);
 
 app.js:
 ```jsx
-import React, { StrictMode } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-
 import { wrapStore } from 'redux-in-worker';
 
 const worker = new Worker('./store.worker', { type: 'module' });
@@ -67,12 +65,10 @@ const Counter = () => {
 };
 
 const App = () => (
-  <StrictMode>
-    <Provider store={store}>
-      <Counter />
-      <Counter />
-    </Provider>
-  </StrictMode>
+  <Provider store={store}>
+    <Counter />
+    <Counter />
+  </Provider>
 );
 
 ReactDOM.render(<App />, document.getElementById('app'));
