@@ -8,36 +8,54 @@ const createPatches = (state) => {
 
   // better way to detect "DELETE_OBJECT"?
   const idSetToRemove = new Set(idSet);
-  const touchId = (obj) => {
-    idSetToRemove.delete(idMap.get(obj));
-    Object.keys(obj).forEach((name) => {
-      touchId(obj[name]);
-    });
+  const markUsed = (baseObj) => {
+    const pending = [baseObj];
+    while (pending.length) {
+      const obj = pending.shift();
+      idSetToRemove.delete(idMap.get(obj));
+      Object.keys(obj).forEach((name) => {
+        if (typeof obj[name] === 'object') {
+          pending.unshift(obj[name]);
+        }
+      });
+    }
   };
 
-  const walk = (obj) => {
-    if (idMap.has(obj)) {
-      touchId(obj);
-      return idMap.get(obj);
-    }
-    const props = Object.keys(obj).map((name) => {
-      if (typeof obj[name] === 'object') {
-        const id = walk(obj[name]);
-        return { type: 'OBJECT', name, id };
+  // so ugly, needs refinement
+  const walk = (rootObj) => {
+    const rootDest = {};
+    const pending = [{ obj: rootObj, dest: rootDest }];
+    while (pending.length) {
+      const { obj, dest } = pending.shift();
+      if (idMap.has(obj)) {
+        markUsed(obj);
+        dest.id = idMap.get(obj);
+      } else {
+        const id = ++idCount;
+        dest.id = id;
+        idMap.set(obj, id);
+        idSet.add(id);
+        const props = [];
+        patches.unshift({
+          type: 'CREATE_OBJECT',
+          isArray: Array.isArray(obj),
+          id,
+          props,
+        });
+        Object.keys(obj).forEach((name) => {
+          if (typeof obj[name] === 'object') {
+            const prop = { type: 'OBJECT', name };
+            props.push(prop);
+            pending.unshift({ obj: obj[name], dest: prop });
+          } else {
+            props.push({ name, value: obj[name] });
+          }
+        });
       }
-      return { name, value: obj[name] };
-    });
-    const id = ++idCount;
-    idMap.set(obj, id);
-    idSet.add(id);
-    patches.push({
-      type: 'CREATE_OBJECT',
-      isArray: Array.isArray(obj),
-      id,
-      props,
-    });
-    return id;
+    }
+    return rootDest.id;
   };
+
   patches.push({
     type: 'RETURN_STATE',
     id: walk(state),

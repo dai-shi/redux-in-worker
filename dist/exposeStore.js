@@ -12,8 +12,6 @@ require("core-js/modules/es.array.is-array");
 
 require("core-js/modules/es.array.iterator");
 
-require("core-js/modules/es.array.map");
-
 require("core-js/modules/es.object.define-property");
 
 require("core-js/modules/es.object.keys");
@@ -47,45 +45,78 @@ var createPatches = function createPatches(state) {
 
   var idSetToRemove = new Set(idSet);
 
-  var touchId = function touchId(obj) {
-    idSetToRemove["delete"](idMap.get(obj));
-    Object.keys(obj).forEach(function (name) {
-      touchId(obj[name]);
-    });
-  };
+  var markUsed = function markUsed(baseObj) {
+    var pending = [baseObj];
 
-  var walk = function walk(obj) {
-    if (idMap.has(obj)) {
-      touchId(obj);
-      return idMap.get(obj);
+    var _loop = function _loop() {
+      var obj = pending.shift();
+      idSetToRemove["delete"](idMap.get(obj));
+      Object.keys(obj).forEach(function (name) {
+        if (_typeof(obj[name]) === 'object') {
+          pending.unshift(obj[name]);
+        }
+      });
+    };
+
+    while (pending.length) {
+      _loop();
+    }
+  }; // so ugly, needs refinement
+
+
+  var walk = function walk(rootObj) {
+    var rootDest = {};
+    var pending = [{
+      obj: rootObj,
+      dest: rootDest
+    }];
+
+    var _loop2 = function _loop2() {
+      var _pending$shift = pending.shift(),
+          obj = _pending$shift.obj,
+          dest = _pending$shift.dest;
+
+      if (idMap.has(obj)) {
+        markUsed(obj);
+        dest.id = idMap.get(obj);
+      } else {
+        var id = ++idCount;
+        dest.id = id;
+        idMap.set(obj, id);
+        idSet.add(id);
+        var props = [];
+        patches.unshift({
+          type: 'CREATE_OBJECT',
+          isArray: Array.isArray(obj),
+          id: id,
+          props: props
+        });
+        Object.keys(obj).forEach(function (name) {
+          if (_typeof(obj[name]) === 'object') {
+            var prop = {
+              type: 'OBJECT',
+              name: name
+            };
+            props.push(prop);
+            pending.unshift({
+              obj: obj[name],
+              dest: prop
+            });
+          } else {
+            props.push({
+              name: name,
+              value: obj[name]
+            });
+          }
+        });
+      }
+    };
+
+    while (pending.length) {
+      _loop2();
     }
 
-    var props = Object.keys(obj).map(function (name) {
-      if (_typeof(obj[name]) === 'object') {
-        var _id = walk(obj[name]);
-
-        return {
-          type: 'OBJECT',
-          name: name,
-          id: _id
-        };
-      }
-
-      return {
-        name: name,
-        value: obj[name]
-      };
-    });
-    var id = ++idCount;
-    idMap.set(obj, id);
-    idSet.add(id);
-    patches.push({
-      type: 'CREATE_OBJECT',
-      isArray: Array.isArray(obj),
-      id: id,
-      props: props
-    });
-    return id;
+    return rootDest.id;
   };
 
   patches.push({
