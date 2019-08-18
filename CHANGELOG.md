@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [0.3.0] - 2019-08-18
 ### Changed
 - Exclude null when checking typeof object
 - Some performance improvements

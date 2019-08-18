@@ -49,13 +49,17 @@ var createPatches = function createPatches(state) {
     var pending = [baseObj];
 
     var _loop = function _loop() {
-      var obj = pending.shift();
-      idSetToRemove["delete"](idMap.get(obj));
-      Object.keys(obj).forEach(function (name) {
-        if (_typeof(obj[name]) === 'object') {
-          pending.unshift(obj[name]);
-        }
-      });
+      var obj = pending.pop();
+      var id = idMap.get(obj);
+
+      if (idSetToRemove.has(id)) {
+        idSetToRemove["delete"](id);
+        Object.keys(obj).forEach(function (name) {
+          if (_typeof(obj[name]) === 'object' && obj[name] !== null) {
+            pending.push(obj[name]);
+          }
+        });
+      }
     };
 
     while (pending.length) {
@@ -72,9 +76,9 @@ var createPatches = function createPatches(state) {
     }];
 
     var _loop2 = function _loop2() {
-      var _pending$shift = pending.shift(),
-          obj = _pending$shift.obj,
-          dest = _pending$shift.dest;
+      var _pending$pop = pending.pop(),
+          obj = _pending$pop.obj,
+          dest = _pending$pop.dest;
 
       if (idMap.has(obj)) {
         markUsed(obj);
@@ -84,29 +88,30 @@ var createPatches = function createPatches(state) {
         dest.id = id;
         idMap.set(obj, id);
         idSet.add(id);
-        var props = [];
+        var keys = Object.keys(obj);
+        var props = new Array(keys.length);
         patches.unshift({
           type: 'CREATE_OBJECT',
           isArray: Array.isArray(obj),
           id: id,
           props: props
         });
-        Object.keys(obj).forEach(function (name) {
-          if (_typeof(obj[name]) === 'object') {
+        keys.forEach(function (name, i) {
+          if (_typeof(obj[name]) === 'object' && obj[name] !== null) {
             var prop = {
               type: 'OBJECT',
               name: name
             };
-            props.push(prop);
-            pending.unshift({
+            props[i] = prop;
+            pending.push({
               obj: obj[name],
               dest: prop
             });
           } else {
-            props.push({
+            props[i] = {
               name: name,
               value: obj[name]
-            });
+            };
           }
         });
       }
