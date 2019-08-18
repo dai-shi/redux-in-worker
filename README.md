@@ -6,11 +6,18 @@
 
 Entire Redux in Web Worker
 
-## Motivation
+## Introduction
 
 Inspired by [React + Redux + Comlink = Off-main-thread](https://dassur.ma/things/react-redux-comlink/).
 
 This is still an experimental project.
+
+Some key points are:
+- It only sends "diffs" from the worker thread to the main thread.
+- The object in the state keeps the ref equality.
+- It can run middleware in the worker thread.
+- There's no async functions involved.
+- There's no proxies involved (at the moment).
 
 ## Install
 
