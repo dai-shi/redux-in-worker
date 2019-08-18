@@ -38,20 +38,21 @@ const createPatches = (state) => {
         dest.id = id;
         idMap.set(obj, id);
         idSet.add(id);
-        const props = [];
+        const keys = Object.keys(obj);
+        const props = new Array(keys.length);
         patches.unshift({
           type: 'CREATE_OBJECT',
           isArray: Array.isArray(obj),
           id,
           props,
         });
-        Object.keys(obj).forEach((name) => {
+        keys.forEach((name, i) => {
           if (typeof obj[name] === 'object' && obj[name] !== null) {
             const prop = { type: 'OBJECT', name };
-            props.push(prop);
+            props[i] = prop;
             pending.push({ obj: obj[name], dest: prop });
           } else {
-            props.push({ name, value: obj[name] });
+            props[i] = { name, value: obj[name] };
           }
         });
       }
