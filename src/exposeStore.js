@@ -11,13 +11,13 @@ const createPatches = (state) => {
   const markUsed = (baseObj) => {
     const pending = [baseObj];
     while (pending.length) {
-      const obj = pending.shift();
+      const obj = pending.pop();
       const id = idMap.get(obj);
       if (idSetToRemove.has(id)) {
         idSetToRemove.delete(id);
         Object.keys(obj).forEach((name) => {
           if (typeof obj[name] === 'object' && obj[name] !== null) {
-            pending.unshift(obj[name]);
+            pending.push(obj[name]);
           }
         });
       }
@@ -29,7 +29,7 @@ const createPatches = (state) => {
     const rootDest = {};
     const pending = [{ obj: rootObj, dest: rootDest }];
     while (pending.length) {
-      const { obj, dest } = pending.shift();
+      const { obj, dest } = pending.pop();
       if (idMap.has(obj)) {
         markUsed(obj);
         dest.id = idMap.get(obj);
@@ -49,7 +49,7 @@ const createPatches = (state) => {
           if (typeof obj[name] === 'object' && obj[name] !== null) {
             const prop = { type: 'OBJECT', name };
             props.push(prop);
-            pending.unshift({ obj: obj[name], dest: prop });
+            pending.push({ obj: obj[name], dest: prop });
           } else {
             props.push({ name, value: obj[name] });
           }
