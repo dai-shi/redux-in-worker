@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Exclude null when checking typeof object
+- Some performance improvements
 
 ## [0.2.0] - 2019-08-18
 ### Changed

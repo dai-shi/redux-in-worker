@@ -12,12 +12,15 @@ const createPatches = (state) => {
     const pending = [baseObj];
     while (pending.length) {
       const obj = pending.shift();
-      idSetToRemove.delete(idMap.get(obj));
-      Object.keys(obj).forEach((name) => {
-        if (typeof obj[name] === 'object' && obj[name] !== null) {
-          pending.unshift(obj[name]);
-        }
-      });
+      const id = idMap.get(obj);
+      if (idSetToRemove.has(id)) {
+        idSetToRemove.delete(id);
+        Object.keys(obj).forEach((name) => {
+          if (typeof obj[name] === 'object' && obj[name] !== null) {
+            pending.unshift(obj[name]);
+          }
+        });
+      }
     }
   };
 
