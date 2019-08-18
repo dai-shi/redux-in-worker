@@ -14,7 +14,7 @@ const createPatches = (state) => {
       const obj = pending.shift();
       idSetToRemove.delete(idMap.get(obj));
       Object.keys(obj).forEach((name) => {
-        if (typeof obj[name] === 'object') {
+        if (typeof obj[name] === 'object' && obj[name] !== null) {
           pending.unshift(obj[name]);
         }
       });
@@ -43,7 +43,7 @@ const createPatches = (state) => {
           props,
         });
         Object.keys(obj).forEach((name) => {
-          if (typeof obj[name] === 'object') {
+          if (typeof obj[name] === 'object' && obj[name] !== null) {
             const prop = { type: 'OBJECT', name };
             props.push(prop);
             pending.unshift({ obj: obj[name], dest: prop });
