@@ -2,7 +2,7 @@ import { createStore } from 'redux';
 
 import { exposeStore } from 'redux-in-worker';
 
-const initialState = { count: 0 };
+export const initialState = { count: 0 };
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'increment':

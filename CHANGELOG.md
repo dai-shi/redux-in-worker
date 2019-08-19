@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2019-08-19
+### Changed
+- Support Redux DevTools Ext (but actions are always UNDEFINED)
+- Make initialState mandatory
+
 ## [0.3.0] - 2019-08-18
 ### Changed
 - Exclude null when checking typeof object

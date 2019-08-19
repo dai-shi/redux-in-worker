@@ -140,7 +140,11 @@ var createPatches = function createPatches(state) {
 
 var exposeStore = function exposeStore(store) {
   self.onmessage = function (e) {
-    store.dispatch(e.data);
+    var action = e.data;
+
+    if (typeof action.type === 'string') {
+      store.dispatch(action);
+    }
   };
 
   var listener = function listener() {

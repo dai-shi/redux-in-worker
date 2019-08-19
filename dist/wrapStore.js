@@ -4,6 +4,10 @@ require("core-js/modules/es.symbol");
 
 require("core-js/modules/es.symbol.description");
 
+require("core-js/modules/es.array.concat");
+
+require("core-js/modules/es.array.filter");
+
 require("core-js/modules/es.array.for-each");
 
 require("core-js/modules/es.array.iterator");
@@ -12,7 +16,15 @@ require("core-js/modules/es.function.name");
 
 require("core-js/modules/es.map");
 
+require("core-js/modules/es.object.define-properties");
+
 require("core-js/modules/es.object.define-property");
+
+require("core-js/modules/es.object.get-own-property-descriptor");
+
+require("core-js/modules/es.object.get-own-property-descriptors");
+
+require("core-js/modules/es.object.keys");
 
 require("core-js/modules/es.object.to-string");
 
@@ -29,7 +41,12 @@ exports.wrapStore = void 0;
 
 var _redux = require("redux");
 
-/* eslint no-param-reassign: 0, no-console: 0 */
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var objMap = new Map();
 
 var applyPatches = function applyPatches(oldState, patches) {
@@ -65,50 +82,60 @@ var applyPatches = function applyPatches(oldState, patches) {
   return state;
 };
 
-var REPLACE_STATE = Symbol('REPLACE_STATE');
+var applyWorker = function applyWorker(worker) {
+  return function (createStoreOrig) {
+    return function (reducer) {
+      var REPLACE_STATE = Symbol('REPLACE_STATE');
 
-var reducer = function reducer() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var action = arguments.length > 1 ? arguments[1] : undefined;
-
-  if (action.type === REPLACE_STATE) {
-    return action.state;
-  }
-
-  return state;
-};
-
-var wrapStore = function wrapStore(worker, initialState) {
-  var middleware = function middleware() {
-    return function (next) {
-      return function (action) {
-        if (action.type !== REPLACE_STATE) {
-          worker.postMessage(action);
-        }
-
-        next(action);
+      var wrappedReducer = function wrappedReducer(state, action) {
+        if (action.type === REPLACE_STATE) return action.state;
+        return reducer(state, action);
       };
+
+      for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        rest[_key - 1] = arguments[_key];
+      }
+
+      var store = createStoreOrig.apply(void 0, [wrappedReducer].concat(rest));
+
+      var dispatch = function dispatch(action) {
+        if (typeof action.type === 'string') {
+          worker.postMessage(action);
+        } else {
+          store.dispatch(action);
+        }
+      };
+
+      worker.onmessage = function (e) {
+        var state = applyPatches(store.getState(), e.data);
+        store.dispatch({
+          type: REPLACE_STATE,
+          state: state
+        });
+      };
+
+      worker.onerror = function () {
+        console.error('wrapStore worker error');
+      };
+
+      worker.onmessageerror = function () {
+        console.error('wrapStore worker message error');
+      };
+
+      return _objectSpread({}, store, {
+        dispatch: dispatch
+      });
     };
   };
+};
 
-  var store = (0, _redux.createStore)(reducer, initialState, (0, _redux.applyMiddleware)(middleware));
-
-  worker.onmessage = function (e) {
-    var state = applyPatches(store.getState, e.data);
-    store.dispatch({
-      type: REPLACE_STATE,
-      state: state
-    });
-  };
-
-  worker.onerror = function () {
-    console.error('wrapStore worker error');
-  };
-
-  worker.onmessageerror = function () {
-    console.error('wrapStore worker message error');
-  };
-
+var wrapStore = function wrapStore(worker, initialState, enhancer) {
+  var store = (0, _redux.createStore)(function (state) {
+    return state;
+  }, // pass through reducer
+  initialState, (0, _redux.compose)(applyWorker(worker), enhancer || function (x) {
+    return x;
+  }));
   return store;
 };
 

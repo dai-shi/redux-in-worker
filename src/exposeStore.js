@@ -78,7 +78,10 @@ const createPatches = (state) => {
 
 export const exposeStore = (store) => {
   self.onmessage = (e) => {
-    store.dispatch(e.data);
+    const action = e.data;
+    if (typeof action.type === 'string') {
+      store.dispatch(action);
+    }
   };
   const listener = () => {
     const patches = createPatches(store.getState());

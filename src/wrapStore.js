@@ -1,6 +1,6 @@
 /* eslint no-param-reassign: 0, no-console: 0 */
 
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, compose } from 'redux';
 
 const objMap = new Map();
 const applyPatches = (oldState, patches) => {
@@ -32,24 +32,22 @@ const applyPatches = (oldState, patches) => {
   return state;
 };
 
-const REPLACE_STATE = Symbol('REPLACE_STATE');
-const reducer = (state = {}, action) => {
-  if (action.type === REPLACE_STATE) {
-    return action.state;
-  }
-  return state;
-};
-
-export const wrapStore = (worker, initialState) => {
-  const middleware = () => next => (action) => {
-    if (action.type !== REPLACE_STATE) {
-      worker.postMessage(action);
-    }
-    next(action);
+const applyWorker = worker => createStoreOrig => (reducer, ...rest) => {
+  const REPLACE_STATE = Symbol('REPLACE_STATE');
+  const wrappedReducer = (state, action) => {
+    if (action.type === REPLACE_STATE) return action.state;
+    return reducer(state, action);
   };
-  const store = createStore(reducer, initialState, applyMiddleware(middleware));
+  const store = createStoreOrig(wrappedReducer, ...rest);
+  const dispatch = (action) => {
+    if (typeof action.type === 'string') {
+      worker.postMessage(action);
+    } else {
+      store.dispatch(action);
+    }
+  };
   worker.onmessage = (e) => {
-    const state = applyPatches(store.getState, e.data);
+    const state = applyPatches(store.getState(), e.data);
     store.dispatch({ type: REPLACE_STATE, state });
   };
   worker.onerror = () => {
@@ -58,5 +56,17 @@ export const wrapStore = (worker, initialState) => {
   worker.onmessageerror = () => {
     console.error('wrapStore worker message error');
   };
+  return {
+    ...store,
+    dispatch,
+  };
+};
+
+export const wrapStore = (worker, initialState, enhancer) => {
+  const store = createStore(
+    state => state, // pass through reducer
+    initialState,
+    compose(applyWorker(worker), enhancer || (x => x)),
+  );
   return store;
 };

@@ -4,8 +4,13 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 
 import { wrapStore } from 'redux-in-worker';
 
-const worker = new Worker('./store.worker', { type: 'module' });
-const store = wrapStore(worker);
+import { initialState } from './store.worker';
+
+const store = wrapStore(
+  new Worker('./store.worker', { type: 'module' }),
+  initialState,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+);
 
 const Counter = () => {
   const dispatch = useDispatch();

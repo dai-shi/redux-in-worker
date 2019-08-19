@@ -7,8 +7,17 @@ import Counter from './Counter';
 import Person from './Person';
 import { initialState } from './store.worker';
 
-const worker = new Worker('./store.worker', { type: 'module' });
-const store = wrapStore(worker, initialState);
+declare global {
+  interface Window {
+    __REDUX_DEVTOOLS_EXTENSION__?: Function;
+  }
+}
+
+const store = wrapStore(
+  new Worker('./store.worker', { type: 'module' }),
+  initialState,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+);
 
 const App = () => (
   <React.StrictMode>
