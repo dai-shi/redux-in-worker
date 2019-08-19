@@ -14,10 +14,10 @@ This is still an experimental project.
 
 Some key points are:
 - It only sends "diffs" from the worker thread to the main thread.
-- The object in the state keeps the ref equality.
+- All Objects in a state tree keep the ref equality.
 - It can run middleware in the worker thread.
-- There's no async functions involved.
-- There's no proxies involved (at the moment).
+- No async functions are involved.
+- No proxies are involved (at the moment).
 
 ## Install
 
