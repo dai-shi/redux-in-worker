@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Use integer types for possible performance improvement
 
 ## [0.5.0] - 2019-08-20
 ### Changed

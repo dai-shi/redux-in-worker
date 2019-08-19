@@ -2,16 +2,23 @@
 
 import { createStore, compose } from 'redux';
 
+import {
+  PATCH_TYPE_CREATE_OBJECT,
+  PATCH_TYPE_DELETE_OBJECT,
+  PATCH_TYPE_RETURN_STATE,
+  PROP_TYPE_OBJECT,
+} from './exposeStore';
+
 const REPLACE_STATE = Symbol('REPLACE_STATE');
 
 const applyPatches = (objMap, oldState, patches) => {
   let state = oldState;
   patches.forEach((patch) => {
     switch (patch.type) {
-      case 'CREATE_OBJECT': {
+      case PATCH_TYPE_CREATE_OBJECT: {
         const obj = patch.isArray ? [] : {};
         patch.props.forEach((prop) => {
-          if (prop.type === 'OBJECT') {
+          if (prop.type === PROP_TYPE_OBJECT) {
             obj[prop.name] = objMap.get(prop.id);
           } else {
             obj[prop.name] = prop.value;
@@ -20,10 +27,10 @@ const applyPatches = (objMap, oldState, patches) => {
         objMap.set(patch.id, obj);
         break;
       }
-      case 'DELETE_OBJECT':
+      case PATCH_TYPE_DELETE_OBJECT:
         objMap.delete(patch.id);
         break;
-      case 'RETURN_STATE':
+      case PATCH_TYPE_RETURN_STATE:
         state = objMap.get(patch.id);
         break;
       default:

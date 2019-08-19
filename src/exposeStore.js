@@ -1,5 +1,10 @@
 /* eslint no-plusplus: 0 */
 
+export const PATCH_TYPE_CREATE_OBJECT = 1;
+export const PATCH_TYPE_DELETE_OBJECT = 2;
+export const PATCH_TYPE_RETURN_STATE = 3;
+export const PROP_TYPE_OBJECT = 4;
+
 let idCount = 0;
 const idSet = new Set();
 const idMap = new WeakMap();
@@ -41,14 +46,14 @@ const createPatches = (state) => {
         const keys = Object.keys(obj);
         const props = new Array(keys.length);
         patches.unshift({
-          type: 'CREATE_OBJECT',
+          type: PATCH_TYPE_CREATE_OBJECT,
           isArray: Array.isArray(obj),
           id,
           props,
         });
         keys.forEach((name, i) => {
           if (typeof obj[name] === 'object' && obj[name] !== null) {
-            const prop = { type: 'OBJECT', name };
+            const prop = { type: PROP_TYPE_OBJECT, name };
             props[i] = prop;
             pending.push({ obj: obj[name], dest: prop });
           } else {
@@ -61,14 +66,14 @@ const createPatches = (state) => {
   };
 
   patches.push({
-    type: 'RETURN_STATE',
+    type: PATCH_TYPE_RETURN_STATE,
     id: walk(state),
   });
 
   idSetToRemove.forEach((id) => {
     idSet.delete(id);
     patches.push({
-      type: 'DELETE_OBJECT',
+      type: PATCH_TYPE_DELETE_OBJECT,
       id,
     });
   });
