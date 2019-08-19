@@ -4,8 +4,6 @@ require("core-js/modules/es.symbol");
 
 require("core-js/modules/es.symbol.description");
 
-require("core-js/modules/es.array.concat");
-
 require("core-js/modules/es.array.filter");
 
 require("core-js/modules/es.array.for-each");
@@ -47,9 +45,9 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var objMap = new Map();
+var REPLACE_STATE = Symbol('REPLACE_STATE');
 
-var applyPatches = function applyPatches(oldState, patches) {
+var applyPatches = function applyPatches(objMap, oldState, patches) {
   var state = oldState;
   patches.forEach(function (patch) {
     switch (patch.type) {
@@ -84,19 +82,8 @@ var applyPatches = function applyPatches(oldState, patches) {
 
 var applyWorker = function applyWorker(worker) {
   return function (createStoreOrig) {
-    return function (reducer) {
-      var REPLACE_STATE = Symbol('REPLACE_STATE');
-
-      var wrappedReducer = function wrappedReducer(state, action) {
-        if (action.type === REPLACE_STATE) return action.state;
-        return reducer(state, action);
-      };
-
-      for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        rest[_key - 1] = arguments[_key];
-      }
-
-      var store = createStoreOrig.apply(void 0, [wrappedReducer].concat(rest));
+    return function () {
+      var store = createStoreOrig.apply(void 0, arguments);
 
       var dispatch = function dispatch(action) {
         if (typeof action.type === 'string') {
@@ -106,8 +93,10 @@ var applyWorker = function applyWorker(worker) {
         }
       };
 
+      var objMap = new Map();
+
       worker.onmessage = function (e) {
-        var state = applyPatches(store.getState(), e.data);
+        var state = applyPatches(objMap, store.getState(), e.data);
         store.dispatch({
           type: REPLACE_STATE,
           state: state
@@ -130,10 +119,12 @@ var applyWorker = function applyWorker(worker) {
 };
 
 var wrapStore = function wrapStore(worker, initialState, enhancer) {
-  var store = (0, _redux.createStore)(function (state) {
+  var reducer = function reducer(state, action) {
+    if (action.type === REPLACE_STATE) return action.state;
     return state;
-  }, // pass through reducer
-  initialState, (0, _redux.compose)(applyWorker(worker), enhancer || function (x) {
+  };
+
+  var store = (0, _redux.createStore)(reducer, initialState, (0, _redux.compose)(applyWorker(worker), enhancer || function (x) {
     return x;
   }));
   return store;
