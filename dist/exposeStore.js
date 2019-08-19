@@ -31,11 +31,19 @@ require("core-js/modules/web.dom-collections.iterator");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.exposeStore = void 0;
+exports.exposeStore = exports.PROP_TYPE_OBJECT = exports.PATCH_TYPE_RETURN_STATE = exports.PATCH_TYPE_DELETE_OBJECT = exports.PATCH_TYPE_CREATE_OBJECT = void 0;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /* eslint no-plusplus: 0 */
+var PATCH_TYPE_CREATE_OBJECT = 1;
+exports.PATCH_TYPE_CREATE_OBJECT = PATCH_TYPE_CREATE_OBJECT;
+var PATCH_TYPE_DELETE_OBJECT = 2;
+exports.PATCH_TYPE_DELETE_OBJECT = PATCH_TYPE_DELETE_OBJECT;
+var PATCH_TYPE_RETURN_STATE = 3;
+exports.PATCH_TYPE_RETURN_STATE = PATCH_TYPE_RETURN_STATE;
+var PROP_TYPE_OBJECT = 4;
+exports.PROP_TYPE_OBJECT = PROP_TYPE_OBJECT;
 var idCount = 0;
 var idSet = new Set();
 var idMap = new WeakMap();
@@ -91,7 +99,7 @@ var createPatches = function createPatches(state) {
         var keys = Object.keys(obj);
         var props = new Array(keys.length);
         patches.unshift({
-          type: 'CREATE_OBJECT',
+          type: PATCH_TYPE_CREATE_OBJECT,
           isArray: Array.isArray(obj),
           id: id,
           props: props
@@ -99,7 +107,7 @@ var createPatches = function createPatches(state) {
         keys.forEach(function (name, i) {
           if (_typeof(obj[name]) === 'object' && obj[name] !== null) {
             var prop = {
-              type: 'OBJECT',
+              type: PROP_TYPE_OBJECT,
               name: name
             };
             props[i] = prop;
@@ -125,13 +133,13 @@ var createPatches = function createPatches(state) {
   };
 
   patches.push({
-    type: 'RETURN_STATE',
+    type: PATCH_TYPE_RETURN_STATE,
     id: walk(state)
   });
   idSetToRemove.forEach(function (id) {
     idSet["delete"](id);
     patches.push({
-      type: 'DELETE_OBJECT',
+      type: PATCH_TYPE_DELETE_OBJECT,
       id: id
     });
   });

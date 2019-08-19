@@ -1,7 +1,7 @@
 {
   "name": "redux-in-worker",
   "description": "Entire Redux in Web Worker",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": "Daishi Kato",
   "repository": {
     "type": "git",

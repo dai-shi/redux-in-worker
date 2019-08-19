@@ -39,6 +39,8 @@ exports.wrapStore = void 0;
 
 var _redux = require("redux");
 
+var _exposeStore = require("./exposeStore");
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -51,11 +53,11 @@ var applyPatches = function applyPatches(objMap, oldState, patches) {
   var state = oldState;
   patches.forEach(function (patch) {
     switch (patch.type) {
-      case 'CREATE_OBJECT':
+      case _exposeStore.PATCH_TYPE_CREATE_OBJECT:
         {
           var obj = patch.isArray ? [] : {};
           patch.props.forEach(function (prop) {
-            if (prop.type === 'OBJECT') {
+            if (prop.type === _exposeStore.PROP_TYPE_OBJECT) {
               obj[prop.name] = objMap.get(prop.id);
             } else {
               obj[prop.name] = prop.value;
@@ -65,11 +67,11 @@ var applyPatches = function applyPatches(objMap, oldState, patches) {
           break;
         }
 
-      case 'DELETE_OBJECT':
+      case _exposeStore.PATCH_TYPE_DELETE_OBJECT:
         objMap["delete"](patch.id);
         break;
 
-      case 'RETURN_STATE':
+      case _exposeStore.PATCH_TYPE_RETURN_STATE:
         state = objMap.get(patch.id);
         break;
 
