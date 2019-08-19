@@ -2,8 +2,9 @@
 
 import { createStore, compose } from 'redux';
 
-const objMap = new Map();
-const applyPatches = (oldState, patches) => {
+const REPLACE_STATE = Symbol('REPLACE_STATE');
+
+const applyPatches = (objMap, oldState, patches) => {
   let state = oldState;
   patches.forEach((patch) => {
     switch (patch.type) {
@@ -32,13 +33,8 @@ const applyPatches = (oldState, patches) => {
   return state;
 };
 
-const applyWorker = worker => createStoreOrig => (reducer, ...rest) => {
-  const REPLACE_STATE = Symbol('REPLACE_STATE');
-  const wrappedReducer = (state, action) => {
-    if (action.type === REPLACE_STATE) return action.state;
-    return reducer(state, action);
-  };
-  const store = createStoreOrig(wrappedReducer, ...rest);
+const applyWorker = worker => createStoreOrig => (...args) => {
+  const store = createStoreOrig(...args);
   const dispatch = (action) => {
     if (typeof action.type === 'string') {
       worker.postMessage(action);
@@ -46,8 +42,9 @@ const applyWorker = worker => createStoreOrig => (reducer, ...rest) => {
       store.dispatch(action);
     }
   };
+  const objMap = new Map();
   worker.onmessage = (e) => {
-    const state = applyPatches(store.getState(), e.data);
+    const state = applyPatches(objMap, store.getState(), e.data);
     store.dispatch({ type: REPLACE_STATE, state });
   };
   worker.onerror = () => {
@@ -63,8 +60,12 @@ const applyWorker = worker => createStoreOrig => (reducer, ...rest) => {
 };
 
 export const wrapStore = (worker, initialState, enhancer) => {
+  const reducer = (state, action) => {
+    if (action.type === REPLACE_STATE) return action.state;
+    return state;
+  };
   const store = createStore(
-    state => state, // pass through reducer
+    reducer,
     initialState,
     compose(applyWorker(worker), enhancer || (x => x)),
   );

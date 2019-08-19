@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Allow to have enhancer to have reducer in main thread
 
 ## [0.4.0] - 2019-08-19
 ### Changed
