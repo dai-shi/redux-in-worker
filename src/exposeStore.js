@@ -3,7 +3,6 @@
 export const PATCH_TYPE_CREATE_OBJECT = 1;
 export const PATCH_TYPE_DELETE_OBJECT = 2;
 export const PATCH_TYPE_RETURN_STATE = 3;
-export const PROP_TYPE_OBJECT = 4;
 
 let idCount = 0;
 const idSet = new Set();
@@ -29,7 +28,7 @@ const createPatches = (state) => {
     }
   };
 
-  // so ugly, needs refinement
+  // is there a better way?
   const walk = (rootObj) => {
     const rootDest = {};
     const pending = [{ obj: rootObj, dest: rootDest }];
@@ -43,21 +42,21 @@ const createPatches = (state) => {
         dest.id = id;
         idMap.set(obj, id);
         idSet.add(id);
-        const keys = Object.keys(obj);
-        const props = new Array(keys.length);
+        const props = {};
         patches.unshift({
           type: PATCH_TYPE_CREATE_OBJECT,
           isArray: Array.isArray(obj),
           id,
           props,
         });
-        keys.forEach((name, i) => {
-          if (typeof obj[name] === 'object' && obj[name] !== null) {
-            const prop = { type: PROP_TYPE_OBJECT, name };
-            props[i] = prop;
-            pending.push({ obj: obj[name], dest: prop });
+        Object.keys(obj).forEach((name, i) => {
+          const value = obj[name];
+          if (typeof value === 'object' && value !== null) {
+            const prop = {};
+            props[name] = prop;
+            pending.push({ obj: value, dest: prop });
           } else {
-            props[i] = { name, value: obj[name] };
+            props[name] = value;
           }
         });
       }

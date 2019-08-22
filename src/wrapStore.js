@@ -6,7 +6,6 @@ import {
   PATCH_TYPE_CREATE_OBJECT,
   PATCH_TYPE_DELETE_OBJECT,
   PATCH_TYPE_RETURN_STATE,
-  PROP_TYPE_OBJECT,
 } from './exposeStore';
 
 const REPLACE_STATE = Symbol('REPLACE_STATE');
@@ -17,11 +16,12 @@ const applyPatches = (objMap, oldState, patches) => {
     switch (patch.type) {
       case PATCH_TYPE_CREATE_OBJECT: {
         const obj = patch.isArray ? [] : {};
-        patch.props.forEach((prop) => {
-          if (prop.type === PROP_TYPE_OBJECT) {
-            obj[prop.name] = objMap.get(prop.id);
+        Object.keys(patch.props).forEach((name) => {
+          const value = patch.props[name];
+          if (typeof value === 'object' && value !== null) {
+            obj[name] = objMap.get(value.id);
           } else {
-            obj[prop.name] = prop.value;
+            obj[name] = value;
           }
         });
         objMap.set(patch.id, obj);
