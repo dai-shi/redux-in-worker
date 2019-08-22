@@ -4,13 +4,13 @@ require("core-js/modules/es.symbol");
 
 require("core-js/modules/es.symbol.description");
 
+require("core-js/modules/es.symbol.iterator");
+
 require("core-js/modules/es.array.filter");
 
 require("core-js/modules/es.array.for-each");
 
 require("core-js/modules/es.array.iterator");
-
-require("core-js/modules/es.function.name");
 
 require("core-js/modules/es.map");
 
@@ -47,6 +47,8 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 var REPLACE_STATE = Symbol('REPLACE_STATE');
 
 var applyPatches = function applyPatches(objMap, oldState, patches) {
@@ -56,11 +58,13 @@ var applyPatches = function applyPatches(objMap, oldState, patches) {
       case _exposeStore.PATCH_TYPE_CREATE_OBJECT:
         {
           var obj = patch.isArray ? [] : {};
-          patch.props.forEach(function (prop) {
-            if (prop.type === _exposeStore.PROP_TYPE_OBJECT) {
-              obj[prop.name] = objMap.get(prop.id);
+          Object.keys(patch.props).forEach(function (name) {
+            var value = patch.props[name];
+
+            if (_typeof(value) === 'object' && value !== null) {
+              obj[name] = objMap.get(value.id);
             } else {
-              obj[prop.name] = prop.value;
+              obj[name] = value;
             }
           });
           objMap.set(patch.id, obj);

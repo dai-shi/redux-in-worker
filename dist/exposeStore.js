@@ -31,7 +31,7 @@ require("core-js/modules/web.dom-collections.iterator");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.exposeStore = exports.PROP_TYPE_OBJECT = exports.PATCH_TYPE_RETURN_STATE = exports.PATCH_TYPE_DELETE_OBJECT = exports.PATCH_TYPE_CREATE_OBJECT = void 0;
+exports.exposeStore = exports.PATCH_TYPE_RETURN_STATE = exports.PATCH_TYPE_DELETE_OBJECT = exports.PATCH_TYPE_CREATE_OBJECT = void 0;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -42,8 +42,6 @@ var PATCH_TYPE_DELETE_OBJECT = 2;
 exports.PATCH_TYPE_DELETE_OBJECT = PATCH_TYPE_DELETE_OBJECT;
 var PATCH_TYPE_RETURN_STATE = 3;
 exports.PATCH_TYPE_RETURN_STATE = PATCH_TYPE_RETURN_STATE;
-var PROP_TYPE_OBJECT = 4;
-exports.PROP_TYPE_OBJECT = PROP_TYPE_OBJECT;
 var idCount = 0;
 var idSet = new Set();
 var idMap = new WeakMap();
@@ -73,7 +71,7 @@ var createPatches = function createPatches(state) {
     while (pending.length) {
       _loop();
     }
-  }; // so ugly, needs refinement
+  }; // is there a better way?
 
 
   var walk = function walk(rootObj) {
@@ -96,30 +94,25 @@ var createPatches = function createPatches(state) {
         dest.id = id;
         idMap.set(obj, id);
         idSet.add(id);
-        var keys = Object.keys(obj);
-        var props = new Array(keys.length);
+        var props = {};
         patches.unshift({
           type: PATCH_TYPE_CREATE_OBJECT,
           isArray: Array.isArray(obj),
           id: id,
           props: props
         });
-        keys.forEach(function (name, i) {
-          if (_typeof(obj[name]) === 'object' && obj[name] !== null) {
-            var prop = {
-              type: PROP_TYPE_OBJECT,
-              name: name
-            };
-            props[i] = prop;
+        Object.keys(obj).forEach(function (name) {
+          var value = obj[name];
+
+          if (_typeof(value) === 'object' && value !== null) {
+            var prop = {};
+            props[name] = prop;
             pending.push({
-              obj: obj[name],
+              obj: value,
               dest: prop
             });
           } else {
-            props[i] = {
-              name: name,
-              value: obj[name]
-            };
+            props[name] = value;
           }
         });
       }

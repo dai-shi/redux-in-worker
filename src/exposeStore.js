@@ -49,7 +49,7 @@ const createPatches = (state) => {
           id,
           props,
         });
-        Object.keys(obj).forEach((name, i) => {
+        Object.keys(obj).forEach((name) => {
           const value = obj[name];
           if (typeof value === 'object' && value !== null) {
             const prop = {};
