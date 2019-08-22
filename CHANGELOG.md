@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2019-08-22
+### Changed
+- Improve performance by simplifying patch structure
+
 ## [0.6.0] - 2019-08-20
 ### Changed
 - Use integer types for possible performance improvement
