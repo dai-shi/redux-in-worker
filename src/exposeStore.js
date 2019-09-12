@@ -1,5 +1,3 @@
-/* eslint no-plusplus: 0 */
-
 export const PATCH_TYPE_CREATE_OBJECT = 1;
 export const PATCH_TYPE_DELETE_OBJECT = 2;
 export const PATCH_TYPE_RETURN_STATE = 3;

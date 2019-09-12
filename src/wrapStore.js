@@ -1,5 +1,3 @@
-/* eslint no-param-reassign: 0, no-console: 0 */
-
 import { createStore, compose } from 'redux';
 
 import {

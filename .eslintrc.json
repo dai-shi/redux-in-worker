@@ -25,24 +25,16 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/indent": ["error", 2],
-    "@typescript-eslint/prefer-interface": "off",
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".tsx"] }],
     "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
     "import/prefer-default-export": "off",
-    "import/no-unresolved": ["error", {
-      "ignore": [
-        "redux-in-worker",
-        "node-fetch"
-      ]
-    }],
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-    "camelcase": ["error", { "allow": ["^unstable_"] }],
-    "@typescript-eslint/camelcase": ["error", { "allow": ["^unstable_"] }],
+    "import/no-unresolved": ["error", { "ignore": ["redux-in-worker", "node-fetch"] }],
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
+    "no-console": "off",
     "import/no-duplicates": "off",
     "no-restricted-globals": "off",
-    "no-restricted-syntax": "off",
     "arrow-parens": ["error", "as-needed", { "requireForBlockBody": true }],
     "no-underscore-dangle": ["error", { "allow": ["__REDUX_DEVTOOLS_EXTENSION__"] }]
   },
@@ -50,6 +42,9 @@
     "files": ["__tests__/**/*"],
     "env": {
       "jest": true
+    },
+    "rules": {
+      "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
     }
   }]
 }
