@@ -92,3 +92,7 @@ PORT=8080 npm run examples:minimal
 ```
 
 and open <http://localhost:8080> in your web browser.
+
+## Blogs
+
+- [Off-main-thread React Redux with Performance](https://blog.axlight.com/posts/off-main-thread-react-redux-with-performance/)
