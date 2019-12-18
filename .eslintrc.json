@@ -29,7 +29,7 @@
     "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
     "import/prefer-default-export": "off",
-    "import/no-unresolved": ["error", { "ignore": ["redux-in-worker", "node-fetch"] }],
+    "import/no-unresolved": ["error", { "ignore": ["redux-in-worker"] }],
     "no-param-reassign": "off",
     "no-plusplus": "off",
     "no-console": "off",
