@@ -34,7 +34,6 @@
     "no-plusplus": "off",
     "no-console": "off",
     "no-restricted-globals": "off",
-    "arrow-parens": ["error", "as-needed", { "requireForBlockBody": true }],
     "no-underscore-dangle": ["error", { "allow": ["__REDUX_DEVTOOLS_EXTENSION__"] }]
   },
   "overrides": [{

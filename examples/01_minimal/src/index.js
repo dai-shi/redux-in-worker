@@ -14,7 +14,7 @@ const store = wrapStore(
 
 const Counter = () => {
   const dispatch = useDispatch();
-  const count = useSelector(state => state.count);
+  const count = useSelector((state) => state.count);
   return (
     <div>
       count: {count}

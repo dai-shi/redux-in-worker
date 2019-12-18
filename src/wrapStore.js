@@ -38,7 +38,7 @@ const applyPatches = (objMap, oldState, patches) => {
   return state;
 };
 
-const applyWorker = worker => createStoreOrig => (...args) => {
+const applyWorker = (worker) => (createStoreOrig) => (...args) => {
   const store = createStoreOrig(...args);
   const dispatch = (action) => {
     if (typeof action.type === 'string') {
@@ -72,7 +72,7 @@ export const wrapStore = (worker, initialState, enhancer) => {
   const store = createStore(
     reducer,
     initialState,
-    compose(applyWorker(worker), enhancer || (x => x)),
+    compose(applyWorker(worker), enhancer || ((x) => x)),
   );
   return store;
 };
