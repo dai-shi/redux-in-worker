@@ -7,14 +7,13 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/react-redux": "latest",
-    "@types/redux-api-middleware": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-redux": "latest",
     "react-scripts": "latest",
     "redux": "latest",
-    "redux-api-middleware": "latest",
-    "redux-in-worker": "latest"
+    "redux-in-worker": "latest",
+    "redux-saga": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
