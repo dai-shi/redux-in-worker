@@ -1,6 +1,4 @@
 import React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 import { createAction } from 'redux-api-middleware';
 
 import { useDispatch, useSelector } from 'react-redux';
