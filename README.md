@@ -97,3 +97,4 @@ and open <http://localhost:8080> in your web browser.
 ## Blogs
 
 - [Off-main-thread React Redux with Performance](https://blog.axlight.com/posts/off-main-thread-react-redux-with-performance/)
+- [Redux in Worker: Off-main-thread Redux Reducers and Middleware](https://blog.axlight.com/posts/redux-in-worker-off-main-thread-redux-reducers-and-middleware/)
