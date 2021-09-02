@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Exports in package.json and building with microbundle
+
 ## [0.7.0] - 2019-08-22
 ### Changed
 - Improve performance by simplifying patch structure
