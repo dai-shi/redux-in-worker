@@ -1,8 +1,9 @@
 # redux-in-worker
 
-[![Build Status](https://travis-ci.com/dai-shi/redux-in-worker.svg?branch=master)](https://travis-ci.com/dai-shi/redux-in-worker)
-[![npm version](https://badge.fury.io/js/redux-in-worker.svg)](https://badge.fury.io/js/redux-in-worker)
-[![bundle size](https://badgen.net/bundlephobia/minzip/redux-in-worker)](https://bundlephobia.com/result?p=redux-in-worker)
+[![CI](https://img.shields.io/github/workflow/status/dai-shi/redux-in-worker/CI)](https://github.com/dai-shi/redux-in-worker/actions?query=workflow%3ACI)
+[![npm](https://img.shields.io/npm/v/redux-in-worker)](https://www.npmjs.com/package/redux-in-worker)
+[![size](https://img.shields.io/bundlephobia/minzip/redux-in-worker)](https://bundlephobia.com/result?p=redux-in-worker)
+[![discord](https://img.shields.io/discord/627656437971288081)](https://discord.gg/MrQdmzd)
 
 Entire Redux in Web Worker
 
