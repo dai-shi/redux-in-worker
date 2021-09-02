@@ -35,6 +35,8 @@
     "no-param-reassign": "off",
     "no-plusplus": "off",
     "no-console": "off",
+    "no-use-before-define": "off",
+    "no-unused-vars": "off",
     "no-restricted-globals": "off",
     "no-underscore-dangle": ["error", { "allow": ["__REDUX_DEVTOOLS_EXTENSION__"] }]
   },
