@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/dai-shi/redux-in-worker.git"
   },
-  "source": "./src/index.js",
+  "source": "./src/index.ts",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.modern.js",
   "types": "./dist/src/index.d.ts",
@@ -30,7 +30,7 @@
     "postcompile": "cp dist/index.modern.mjs dist/index.modern.js && cp dist/index.modern.mjs.map dist/index.modern.js.map",
     "test": "run-s eslint tsc-test jest",
     "eslint": "eslint --ext .js,.ts,.tsx --ignore-path .gitignore --ignore-pattern dist .",
-    "jest": "jest",
+    "jest": "jest --preset ts-jest/presets/js-with-ts __tests__/*.tsx",
     "tsc-test": "tsc --project . --noEmit",
     "examples:01_minimal": "DIR=01_minimal EXT=js webpack-dev-server",
     "examples:02_typescript": "DIR=02_typescript webpack-dev-server",

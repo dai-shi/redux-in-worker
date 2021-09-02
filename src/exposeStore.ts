@@ -1,3 +1,5 @@
+import { Store, Action, AnyAction } from 'redux';
+
 export const PATCH_TYPE_CREATE_OBJECT = 1;
 export const PATCH_TYPE_DELETE_OBJECT = 2;
 export const PATCH_TYPE_RETURN_STATE = 3;
@@ -5,12 +7,12 @@ export const PATCH_TYPE_RETURN_STATE = 3;
 let idCount = 0;
 const idSet = new Set();
 const idMap = new WeakMap();
-const createPatches = (state) => {
+const createPatches = (state: any) => {
   const patches = [];
 
   // better way to detect "DELETE_OBJECT"?
   const idSetToRemove = new Set(idSet);
-  const markUsed = (baseObj) => {
+  const markUsed = (baseObj: any) => {
     const pending = [baseObj];
     while (pending.length) {
       const obj = pending.pop();
@@ -27,11 +29,11 @@ const createPatches = (state) => {
   };
 
   // is there a better way?
-  const walk = (rootObj) => {
-    const rootDest = {};
+  const walk = (rootObj: any) => {
+    const rootDest: any = {};
     const pending = [{ obj: rootObj, dest: rootDest }];
     while (pending.length) {
-      const { obj, dest } = pending.pop();
+      const { obj, dest }: any = pending.pop();
       if (idMap.has(obj)) {
         markUsed(obj);
         dest.id = idMap.get(obj);
@@ -40,7 +42,7 @@ const createPatches = (state) => {
         dest.id = id;
         idMap.set(obj, id);
         idSet.add(id);
-        const props = {};
+        const props: any = {};
         patches.unshift({
           type: PATCH_TYPE_CREATE_OBJECT,
           isArray: Array.isArray(obj),
@@ -78,7 +80,9 @@ const createPatches = (state) => {
   return patches;
 };
 
-export const exposeStore = (store) => {
+export const exposeStore = <S, A extends Action = AnyAction>(
+  store: Store<S, A>,
+) => {
   self.onmessage = (e) => {
     const action = e.data;
     if (typeof action.type === 'string') {

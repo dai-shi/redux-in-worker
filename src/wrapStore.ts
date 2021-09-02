@@ -1,4 +1,10 @@
-import { createStore, compose } from 'redux';
+import {
+  Store,
+  Action,
+  AnyAction,
+  createStore,
+  compose,
+} from 'redux';
 
 import {
   PATCH_TYPE_CREATE_OBJECT,
@@ -8,12 +14,12 @@ import {
 
 const REPLACE_STATE = Symbol('REPLACE_STATE');
 
-const applyPatches = (objMap, oldState, patches) => {
+const applyPatches = (objMap: any, oldState: any, patches: any) => {
   let state = oldState;
-  patches.forEach((patch) => {
+  patches.forEach((patch: any) => {
     switch (patch.type) {
       case PATCH_TYPE_CREATE_OBJECT: {
-        const obj = patch.isArray ? [] : {};
+        const obj: any = patch.isArray ? [] : {};
         Object.keys(patch.props).forEach((name) => {
           const value = patch.props[name];
           if (typeof value === 'object' && value !== null) {
@@ -38,9 +44,11 @@ const applyPatches = (objMap, oldState, patches) => {
   return state;
 };
 
-const applyWorker = (worker) => (createStoreOrig) => (...args) => {
+const applyWorker = (worker: any) => (createStoreOrig: any) => (
+  ...args: any[]
+) => {
   const store = createStoreOrig(...args);
-  const dispatch = (action) => {
+  const dispatch = (action: any) => {
     if (typeof action.type === 'string') {
       worker.postMessage(action);
     } else {
@@ -48,7 +56,7 @@ const applyWorker = (worker) => (createStoreOrig) => (...args) => {
     }
   };
   const objMap = new Map();
-  worker.onmessage = (e) => {
+  worker.onmessage = (e: any) => {
     const state = applyPatches(objMap, store.getState(), e.data);
     store.dispatch({ type: REPLACE_STATE, state });
   };
@@ -64,15 +72,20 @@ const applyWorker = (worker) => (createStoreOrig) => (...args) => {
   };
 };
 
-export const wrapStore = (worker, initialState, enhancer) => {
-  const reducer = (state, action) => {
+export const wrapStore = <S, A extends Action = AnyAction>(
+  worker: Worker,
+  initialState: S,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  enhancer?: Function,
+): Store<S, A> => {
+  const reducer = (state: any, action: any) => {
     if (action.type === REPLACE_STATE) return action.state;
     return state;
   };
   const store = createStore(
     reducer,
     initialState,
-    compose(applyWorker(worker), enhancer || ((x) => x)),
+    compose(applyWorker(worker), enhancer || ((x: any) => x)),
   );
   return store;
 };
