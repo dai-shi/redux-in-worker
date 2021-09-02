@@ -49,7 +49,7 @@ const routerEnhancer = (createStore: StoreCreator) => {
 };
 
 const outerStore = wrapStore(
-  new Worker('./store.worker', { type: 'module' }),
+  new Worker(new URL('./store.worker', import.meta.url)),
   initialState,
   compose(
     routerEnhancer,

@@ -1,49 +1,41 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WorkerPlugin = require('worker-plugin');
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 const { DIR, EXT = 'ts' } = process.env;
 
 module.exports = {
   mode: 'development',
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
   entry: `./examples/${DIR}/src/index.${EXT}`,
+  output: {
+    publicPath: '/',
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: `./examples/${DIR}/public/index.html`,
     }),
-    new WorkerPlugin(),
   ],
   module: {
     rules: [{
-      test: /\.jsx?$/,
+      test: /\.[jt]sx?$/,
       exclude: /node_modules/,
-      use: [{
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            ['@babel/preset-env', {
-              useBuiltIns: 'usage',
-              corejs: 3,
-            }],
-            '@babel/preset-react',
-          ],
-        },
-      }],
-    }, {
-      test: /\.tsx?$/,
       loader: 'ts-loader',
+      options: {
+        transpileOnly: true,
+      },
     }],
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      'redux-in-worker': __dirname,
+      'redux-in-worker': `${__dirname}/src`,
     },
   },
   devServer: {
     port: process.env.PORT || '8080',
-    contentBase: `./examples/${DIR}/public`,
+    static: {
+      directory: `./examples/${DIR}/public`,
+    },
+    historyApiFallback: true,
   },
 };

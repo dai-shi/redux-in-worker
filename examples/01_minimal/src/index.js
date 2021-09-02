@@ -7,7 +7,7 @@ import { wrapStore } from 'redux-in-worker';
 import { initialState } from './store.worker';
 
 const store = wrapStore(
-  new Worker('./store.worker', { type: 'module' }),
+  new Worker(new URL('./store.worker', import.meta.url)),
   initialState,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
