@@ -37,7 +37,7 @@ type AsyncAction = AsyncActionFetch | AsyncActionDecrement;
 
 export type Action = ReducerAction | AsyncAction;
 
-function* userFetcher(action: AsyncActionFetch) {
+function* userFetcher(action: AsyncActionFetch): any {
   try {
     yield put<ReducerAction>({ type: 'START_FETCH_USER' });
     const response = yield call(() => fetch(`https://jsonplaceholder.typicode.com/users/${action.id}`));
