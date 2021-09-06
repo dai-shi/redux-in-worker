@@ -59,7 +59,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import { wrapStore } from 'redux-in-worker';
 
 const initialState = { count: 0 };
-const worker = new Worker('./store.worker', { type: 'module' });
+const worker = new Worker(new URL('./store.worker', import.meta.url));
 const store = wrapStore(worker, initialState);
 
 const Counter = () => {
