@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2021-09-06
 ### Changed
 - Exports in package.json and building with microbundle
 
