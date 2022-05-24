@@ -32,11 +32,11 @@
     "eslint": "eslint --ext .js,.ts,.tsx --ignore-path .gitignore --ignore-pattern dist .",
     "jest": "jest --preset ts-jest/presets/js-with-ts __tests__/*.tsx",
     "tsc-test": "tsc --project . --noEmit",
-    "examples:01_minimal": "DIR=01_minimal EXT=js webpack-cli serve",
-    "examples:02_typescript": "DIR=02_typescript webpack-cli serve",
-    "examples:03_router": "DIR=03_router webpack-cli serve",
-    "examples:04_api": "DIR=04_api webpack-cli serve",
-    "examples:05_saga": "DIR=05_saga webpack-cli serve"
+    "examples:01_minimal": "DIR=01_minimal EXT=js webpack serve",
+    "examples:02_typescript": "DIR=02_typescript webpack serve",
+    "examples:03_router": "DIR=03_router webpack serve",
+    "examples:04_api": "DIR=04_api webpack serve",
+    "examples:05_saga": "DIR=05_saga webpack serve"
   },
   "keywords": [
     "redux",
