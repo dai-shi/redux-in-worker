@@ -84,7 +84,7 @@ export const wrapStore = <S, A extends Action = AnyAction>(
   };
   const store = createStore(
     reducer,
-    initialState,
+    initialState as any, // FIXME avoid any
     compose(applyWorker(worker), enhancer || ((x: any) => x)),
   );
   return store;

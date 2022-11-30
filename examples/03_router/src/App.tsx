@@ -34,8 +34,11 @@ const history = createBrowserHistory();
 let innerStore: Store;
 const routerEnhancer = (createStore: StoreCreator) => {
   const routerReducer = connectRouter(history);
-  return (origReducer: Reducer, preloadedState?: DeepPartial<unknown>,
-    enhancer?: StoreEnhancer) => {
+  return (
+    origReducer: Reducer,
+    preloadedState?: DeepPartial<unknown>,
+    enhancer?: StoreEnhancer,
+  ) => {
     const reducer: Reducer = (state: { router: RouterState }, action: AnyAction) => {
       const newState = origReducer(state, action);
       return {

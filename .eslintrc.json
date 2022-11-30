@@ -39,7 +39,9 @@
     "no-use-before-define": "off",
     "no-unused-vars": "off",
     "no-restricted-globals": "off",
-    "no-underscore-dangle": ["error", { "allow": ["__REDUX_DEVTOOLS_EXTENSION__"] }]
+    "no-underscore-dangle": ["error", { "allow": ["__REDUX_DEVTOOLS_EXTENSION__"] }],
+    "react/function-component-definition": ["error", { "namedComponents": "arrow-function" }],
+    "default-param-last": "off"
   },
   "overrides": [{
     "files": ["__tests__/**/*"],
