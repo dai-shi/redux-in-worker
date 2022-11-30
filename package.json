@@ -36,7 +36,8 @@
     "examples:02_typescript": "DIR=02_typescript webpack serve",
     "examples:03_router": "DIR=03_router webpack serve",
     "examples:04_api": "DIR=04_api webpack serve",
-    "examples:05_saga": "DIR=05_saga webpack serve"
+    "examples:05_saga": "DIR=05_saga webpack serve",
+    "examples:06_configurestore": "DIR=06_configurestore webpack serve"
   },
   "keywords": [
     "redux",
@@ -48,6 +49,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
     "@types/history": "^4.7.11",
     "@types/jest": "^29.2.3",
     "@types/react": "^18.0.25",
